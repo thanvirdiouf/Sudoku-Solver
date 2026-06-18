@@ -135,4 +135,4 @@ The initial board is validated for conflicts before solving. Typical puzzles sol
 
 ## License
 
-This project is free to use and modify.
+AGPL 3.0 License
