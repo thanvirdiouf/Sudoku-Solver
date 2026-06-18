@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+
+    <!-- 3x3 grid lines -->
+    <path
+        android:fillColor="#00000000"
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="1.5"
+        android:pathData="M36,18L36,90" />
+    <path
+        android:fillColor="#00000000"
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="1.5"
+        android:pathData="M72,18L72,90" />
+    <path
+        android:fillColor="#00000000"
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="1.5"
+        android:pathData="M18,36L90,36" />
+    <path
+        android:fillColor="#00000000"
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="1.5"
+        android:pathData="M18,72L90,72" />
+
+    <!-- Outer border -->
+    <path
+        android:fillColor="#00000000"
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="3"
+        android:pathData="M18,18L90,18L90,90L18,90Z" />
+
+    <!-- Digits: 1, 2, 3, 4, 5, 6, 7, 8, 9 in grid positions -->
+    <!-- Row 1 -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M24,32L26,32L26,26L28,26L28,32L30,32L30,26L32,26L32,32L34,32L34,24L24,24Z" />
+    <!-- Simplified: use text-like shapes -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M44,24L44,34M38,29L50,29" />
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M54,26L56,24L60,24L60,34M56,29L60,29" />
+
+    <!-- Row 2 -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M24,48L26,48L26,50L30,50L30,42L24,42L24,48" />
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M38,42L38,54M38,42L46,42L46,48L40,48" />
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M54,42L54,54M62,42L50,54" />
+
+    <!-- Row 3 -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M24,66L24,58L30,58L30,60L26,60L26,62L28,62L28,64L26,64L26,66Z" />
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M38,58L46,58L46,60L40,60L40,62L44,62L44,64L38,64Z" />
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M54,58L54,66L62,58L62,66M50,62L58,62" />
+</vector>
