@@ -12,6 +12,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawWithContent
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -21,8 +24,6 @@ import com.sudokusolver.ui.theme.CellBackground
 import com.sudokusolver.ui.theme.CellBackgroundSameValue
 import com.sudokusolver.ui.theme.CellBackgroundSelected
 import com.sudokusolver.ui.theme.GridLine
-import com.sudokusolver.ui.theme.SolverDigitColor
-import com.sudokusolver.ui.theme.UserDigitColor
 
 @Composable
 fun SudokuGrid(
@@ -35,7 +36,30 @@ fun SudokuGrid(
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .border(1.5.dp, GridLine)
+            .border(0.5.dp, GridLine)
+            .drawWithContent {
+                drawContent()
+                // Draw thick box boundary lines on top
+                val boxLineColor = Color(0xFF1976D2)
+                val boxLineWidth = 4.dp.toPx()
+                val w = size.width
+                val h = size.height
+                val cx1 = w / 3f
+                val cx2 = w * 2f / 3f
+                val cy1 = h / 3f
+                val cy2 = h * 2f / 3f
+                // Vertical box lines (between cols 3-4 and 6-7)
+                drawLine(boxLineColor, Offset(cx1, 0f), Offset(cx1, h), boxLineWidth)
+                drawLine(boxLineColor, Offset(cx2, 0f), Offset(cx2, h), boxLineWidth)
+                // Horizontal box lines (between rows 3-4 and 6-7)
+                drawLine(boxLineColor, Offset(0f, cy1), Offset(w, cy1), boxLineWidth)
+                drawLine(boxLineColor, Offset(0f, cy2), Offset(w, cy2), boxLineWidth)
+                // Outer border drawn on top
+                drawLine(boxLineColor, Offset(0f, 0f), Offset(w, 0f), boxLineWidth)
+                drawLine(boxLineColor, Offset(0f, h), Offset(w, h), boxLineWidth)
+                drawLine(boxLineColor, Offset(0f, 0f), Offset(0f, h), boxLineWidth)
+                drawLine(boxLineColor, Offset(w, 0f), Offset(w, h), boxLineWidth)
+            }
     ) {
         for (row in 0 until 9) {
             Row(modifier = Modifier.fillMaxWidth()) {
@@ -83,7 +107,7 @@ private fun SudokuCell(
         modifier = modifier
             .aspectRatio(1f)
             .background(backgroundColor)
-            .border(1.5.dp, GridLine)
+            .border(0.5.dp, GridLine)
             .clickable { onClick() }
     ) {
         if (cell.isFilled) {
@@ -91,7 +115,7 @@ private fun SudokuCell(
                 text = cell.value.toString(),
                 fontSize = if (isSelected) 22.sp else 20.sp,
                 fontWeight = if (cell.isUserEntered) FontWeight.Bold else FontWeight.Normal,
-                color = if (cell.isUserEntered) UserDigitColor else SolverDigitColor,
+                color = if (cell.isUserEntered) com.sudokusolver.ui.theme.UserDigitColor else com.sudokusolver.ui.theme.SolverDigitColor,
                 textAlign = TextAlign.Center
             )
         }

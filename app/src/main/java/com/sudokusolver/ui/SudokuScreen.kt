@@ -13,6 +13,8 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -43,6 +45,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.sudokusolver.model.Cell
 import com.sudokusolver.ui.theme.Blue700
 import com.sudokusolver.util.SudokuImageExporter
 import com.sudokusolver.viewmodel.SudokuViewModel
@@ -129,9 +132,13 @@ fun SudokuScreen(
 
             // Number pad
             NumberPad(
+                cells = state.cells,
                 onDigitClick = { viewModel.placeDigit(it) },
                 onEraseClick = { viewModel.eraseSelected() }
             )
+
+            // Status panel
+            StatusPanel(cells = state.cells, isSolved = state.isSolved)
 
             // Action buttons
             Row(
@@ -210,4 +217,107 @@ fun SudokuScreen(
             Spacer(modifier = Modifier.height(12.dp))
         }
     }
+}
+
+@Composable
+private fun StatusPanel(cells: List<List<Cell>>, isSolved: Boolean) {
+    val emptyCount = cells.sumOf { row -> row.count { it.isEmpty } }
+    val filledCount = 81 - emptyCount
+    val hasConflicts = !isSolved && hasBoardConflicts(cells)
+
+    val difficulty = when {
+        filledCount == 0 -> null
+        filledCount < 19 -> "Expert"
+        filledCount < 27 -> "Hard"
+        filledCount < 36 -> "Medium"
+        else -> "Easy"
+    }
+
+    val borderColor = if (hasConflicts) Color(0xFFEF9A9A) else Color(0xFFA5D6A7)
+    val bgColor = if (hasConflicts) Color(0xFFFFF3F0) else Color(0xFFF1F8E9)
+
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .border(1.dp, borderColor, RoundedCornerShape(8.dp))
+            .background(bgColor, RoundedCornerShape(8.dp))
+            .padding(12.dp),
+        verticalArrangement = Arrangement.spacedBy(4.dp)
+    ) {
+        // Row 1: cells remaining + difficulty
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Text(
+                text = "$filledCount filled · $emptyCount empty",
+                fontSize = 14.sp,
+                fontWeight = FontWeight.Medium,
+                color = Color(0xFF424242)
+            )
+            if (difficulty != null) {
+                Text(
+                    text = difficulty,
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = when (difficulty) {
+                        "Easy" -> Color(0xFF2E7D32)
+                        "Medium" -> Color(0xFFF57F17)
+                        "Hard" -> Color(0xFFE65100)
+                        "Expert" -> Color(0xFFB71C1C)
+                        else -> Color.Gray
+                    }
+                )
+            }
+        }
+
+        // Row 2: conflict status
+        Row(
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = if (filledCount == 0) "— Start entering a puzzle"
+                else if (isSolved) "✓ Puzzle solved"
+                else if (hasConflicts) "⚠ Conflicts detected"
+                else "✓ No conflicts detected",
+                fontSize = 14.sp,
+                fontWeight = FontWeight.Medium,
+                color = if (hasConflicts) Color(0xFFC62828)
+                    else if (isSolved || filledCount > 0) Color(0xFF2E7D32)
+                    else Color(0xFF757575)
+            )
+        }
+    }
+}
+
+private fun hasBoardConflicts(cells: List<List<Cell>>): Boolean {
+    // Check rows
+    for (row in 0 until 9) {
+        val seen = mutableSetOf<Int>()
+        for (col in 0 until 9) {
+            val v = cells[row][col].value
+            if (v != 0 && !seen.add(v)) return true
+        }
+    }
+    // Check columns
+    for (col in 0 until 9) {
+        val seen = mutableSetOf<Int>()
+        for (row in 0 until 9) {
+            val v = cells[row][col].value
+            if (v != 0 && !seen.add(v)) return true
+        }
+    }
+    // Check 3×3 boxes
+    for (boxRow in 0 until 3) {
+        for (boxCol in 0 until 3) {
+            val seen = mutableSetOf<Int>()
+            for (r in 0 until 3) {
+                for (c in 0 until 3) {
+                    val v = cells[boxRow * 3 + r][boxCol * 3 + c].value
+                    if (v != 0 && !seen.add(v)) return true
+                }
+            }
+        }
+    }
+    return false
 }

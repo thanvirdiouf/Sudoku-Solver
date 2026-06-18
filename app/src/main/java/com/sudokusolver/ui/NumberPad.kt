@@ -20,13 +20,23 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.sudokusolver.model.Cell
 
 @Composable
 fun NumberPad(
+    cells: List<List<Cell>>,
     onDigitClick: (Int) -> Unit,
     onEraseClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    // Count occurrences of each digit on the board
+    val digitCounts = IntArray(10) { 0 }
+    for (row in cells) {
+        for (cell in row) {
+            if (cell.value in 1..9) digitCounts[cell.value]++
+        }
+    }
+
     Column(
         modifier = modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -38,7 +48,11 @@ fun NumberPad(
             horizontalArrangement = Arrangement.SpaceEvenly
         ) {
             for (digit in 1..5) {
-                NumberButton(digit, onClick = { onDigitClick(digit) })
+                NumberButton(
+                    digit = digit,
+                    remaining = 9 - digitCounts[digit],
+                    onClick = { onDigitClick(digit) }
+                )
             }
         }
 
@@ -49,7 +63,11 @@ fun NumberPad(
             verticalAlignment = Alignment.CenterVertically
         ) {
             for (digit in 6..9) {
-                NumberButton(digit, onClick = { onDigitClick(digit) })
+                NumberButton(
+                    digit = digit,
+                    remaining = 9 - digitCounts[digit],
+                    onClick = { onDigitClick(digit) }
+                )
             }
             EraseButton(onClick = onEraseClick)
         }
@@ -59,6 +77,7 @@ fun NumberPad(
 @Composable
 private fun NumberButton(
     digit: Int,
+    remaining: Int,
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -71,11 +90,21 @@ private fun NumberButton(
             contentColor = MaterialTheme.colorScheme.onPrimaryContainer
         )
     ) {
-        Text(
-            text = digit.toString(),
-            fontSize = 28.sp,
-            fontWeight = FontWeight.Bold
-        )
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            Text(
+                text = digit.toString(),
+                fontSize = 24.sp,
+                fontWeight = FontWeight.Bold
+            )
+            Text(
+                text = "${remaining}",
+                fontSize = 11.sp,
+                fontWeight = FontWeight.Light
+            )
+        }
     }
 }
 
